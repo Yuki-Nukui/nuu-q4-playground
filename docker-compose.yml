@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  app:
+    container_name: nuu-q4-app-container
+    build: .
+    tty: true
+    stdin_open: true
+    volumes:
+      - type: bind
+        source: .
+        target: /app
+    depends_on:
+      - db
+    environment:
+      TZ: Asia/Tokyo
+    ports:
+      - '3001:3001'
+      - '5555:5555'
+
+  db:
+    container_name: nuu-q4-db-container
+    image: mysql:5.7
+    platform: linux/amd64
+    environment:
+      MYSQL_DATABASE: mydb
+      MYSQL_ROOT_PASSWORD: pw
+      TZ: 'Asia/Tokyo'
+    ports:
+      - '3306:3306'
