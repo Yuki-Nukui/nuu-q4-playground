@@ -3,27 +3,31 @@ services:
   app:
     container_name: nuu-q4-app-container
     build: .
-    tty: true
     stdin_open: true
-    volumes:
-      - type: bind
-        source: .
-        target: /app
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       TZ: Asia/Tokyo
     ports:
       - '3001:3001'
-      - '5555:5555'
 
   db:
     container_name: nuu-q4-db-container
-    image: mysql:5.7
-    platform: linux/amd64
+    image: mysql:8.0
+    platform: linux/arm64
     environment:
-      MYSQL_DATABASE: mydb
       MYSQL_ROOT_PASSWORD: pw
+      MYSQL_DATABASE: nuu-db
+      MYSQL_USER: nuu
+      MYSQL_PASSWORD: pw
       TZ: 'Asia/Tokyo'
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf
     ports:
-      - '3306:3306'
+      - '3307:3306'
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+      timeout: 20s
+      retries: 10
