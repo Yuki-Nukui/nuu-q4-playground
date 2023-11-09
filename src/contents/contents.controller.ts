@@ -1,23 +1,24 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ContentsService } from './contents.service';
-import { Contents } from './contents.types';
+import { Contents } from '@prisma/client';
 
 @Controller('contents')
 export class ContentsController {
   constructor(private readonly contentsService: ContentsService) {}
 
   @Get()
-  findAll(): Contents[] {
+  async findAll(): Promise<Contents[]> {
     return this.contentsService.findAll();
   }
 
   @Post()
-  create(@Body() content: Contents): void {
+  async create(@Body() content: Contents): Promise<Contents> {
     this.contentsService.create(content);
+    return content;
   }
 
   @Get(':id')
-  findById(@Param('id') id: string): Contents {
+  async findById(@Param('id') id: string): Promise<Contents> {
     return this.contentsService.findById(id);
   }
 }

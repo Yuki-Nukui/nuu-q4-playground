@@ -1,20 +1,30 @@
 import { Injectable } from '@nestjs/common';
-import { Contents } from './contents.types';
+import { Contents } from '@prisma/client';
+import { PrismaService } from '../prisma.service';
 
 @Injectable()
 export class ContentsService {
-  // 他のクラスでの使用ができないようにprivate readonlyにする
-  private readonly contents: Contents[] = [];
+  constructor(private prismaService: PrismaService) {}
 
-  findAll(): Contents[] {
-    return this.contents;
+  async findAll(): Promise<Contents[]> {
+    return await this.prismaService.contents.findMany();
   }
 
-  create(content: Contents): void {
-    this.contents.push(content);
+  async create(content: Contents): Promise<Contents> {
+    return await this.prismaService.contents.create({
+      data: {
+        id: content.id,
+        title: content.title,
+        content: content.content,
+        author: content.author,
+        createdAt: content.createdAt,
+      },
+    });
   }
 
-  findById(id: string): Contents {
-    return this.contents.find((content) => content.id === Number(id));
+  async findById(id: string): Promise<Contents> {
+    return await this.prismaService.contents.findUnique({
+      where: { id: Number(id) },
+    });
   }
 }

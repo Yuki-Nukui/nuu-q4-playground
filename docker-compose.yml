@@ -9,8 +9,9 @@ services:
         condition: service_healthy
     environment:
       TZ: Asia/Tokyo
+      DATABASE_URL: 'mysql://nuu:pw@db:3306/nuu-db'
     ports:
-      - '3001:3001'
+      - '3002:3001'
 
   db:
     container_name: nuu-q4-db-container
