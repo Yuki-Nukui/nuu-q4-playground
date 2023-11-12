@@ -26,6 +26,7 @@ services:
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     volumes:
       - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./docker/db/init/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - '3307:3306'
     healthcheck:
